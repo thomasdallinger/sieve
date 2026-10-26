@@ -55,6 +55,18 @@ Also included:
 
 During development, `swift run Sieve` runs the app straight from the package.
 
+## Default file viewer
+
+Settings → *Reveal files in Sieve instead of Finder* sets the global `NSFileViewer` default. "Show in Finder" in
+other apps and `open -R` in Terminal then show the item selected in a Sieve window. Folders also offer Sieve under
+*Open With*.
+
+Finder stays in charge of the desktop, the Trash and opening folders from other apps. macOS refuses to change the
+default app for folders, so no other app can take that over. Sieve's own *Reveal in Finder* still goes to Finder;
+the first time, macOS asks for permission to control Finder.
+
+If you delete Sieve while the setting is on, run `defaults delete -g NSFileViewer` to give reveals back to Finder.
+
 ## Keyboard
 
 | Keys | Action |

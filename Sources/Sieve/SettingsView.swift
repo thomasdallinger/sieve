@@ -12,6 +12,7 @@ struct SettingsView: View {
     @State private var building = false
     @State private var excludedText = ""
     @State private var modelText = ""
+    @State private var isFileViewer = false
 
     var body: some View {
         Form {
@@ -22,6 +23,17 @@ struct SettingsView: View {
                     ForEach(ViewMode.allCases, id: \.self) { Text($0.title).tag($0) }
                 }
                 Text("File extensions are always shown. Sieve has no option to hide them.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+
+            Section("Default file viewer") {
+                Toggle("Reveal files in Sieve instead of Finder", isOn: Binding(
+                    get: { isFileViewer },
+                    set: { DefaultFileViewer.setEnabled($0); isFileViewer = DefaultFileViewer.isEnabled }))
+                    .disabled(DefaultFileViewer.bundleID == nil)
+                Text(DefaultFileViewer.bundleID == nil
+                     ? "Available when Sieve runs as an app (scripts/install.sh), not from swift build."
+                     : "“Show in Finder” in other apps and open -R in Terminal show the item selected in a Sieve window. Finder still opens folders from other apps and draws the desktop: macOS doesn’t let any other app take that over. Reveal in Finder in Sieve still goes to Finder.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
 
@@ -75,6 +87,7 @@ struct SettingsView: View {
         .onAppear {
             excludedText = prefs.excludedNames.joined(separator: ", ")
             modelText = prefs.modelName
+            isFileViewer = DefaultFileViewer.isEnabled
             refresh()
         }
         .onReceive(NotificationCenter.default.publisher(for: IndexManager.didChange)) { _ in refresh() }

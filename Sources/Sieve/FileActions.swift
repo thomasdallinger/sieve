@@ -29,6 +29,7 @@ enum FileActions {
     }
 
     static func showInFinder(_ items: [FileItem]) {
+        if DefaultFileViewer.isEnabled { DefaultFileViewer.revealInFinder(items.map(\.url)); return }
         NSWorkspace.shared.activateFileViewerSelecting(items.map(\.url))
     }
 

@@ -72,7 +72,8 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate, Brows
         window.setFrameAutosaveName("SieveBrowserWindow")
         if window.frame.origin == .zero { window.center() }
         setViewMode(Preferences.shared.viewMode, focus: false)
-        navigate(to: start, root: start, record: false)
+        // A folder opens as the root; a file or package (revealed from another app) is selected in its folder.
+        if FileItem.at(path: start)?.isContainer ?? true { navigate(to: start, root: start, record: false) } else { navigate(to: start, record: false) }
     }
 
     required init?(coder: NSCoder) { fatalError() }

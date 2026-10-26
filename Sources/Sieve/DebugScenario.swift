@@ -9,8 +9,8 @@ import SieveCore
 /// One command per line: `wait <s>`, `go <path>`, `search <text>`, `mode columns|list`, `key <name>`
 /// (down, up, left, right, return, space, escape), `select <path>`, `recents`, `filter <kind|none>`,
 /// `sort <key>`, `action <selector>` (menu action, e.g. newFolder), `type <text>` (into the active text field),
-/// `appearance light|dark`, `index <path>`, `bench <path>`, `dump`, `shot <file.png>` (renders the window in-process),
-/// `shotwin <title> <file.png>` (any window by title), `quit`.
+/// `appearance light|dark`, `fileviewer on|off` (Sieve as the default file viewer), `index <path>`, `bench <path>`,
+/// `dump`, `shot <file.png>` (renders the window in-process), `shotwin <title> <file.png>` (any window by title), `quit`.
 enum DebugScenario {
     static func runIfRequested() {
         guard let file = ProcessInfo.processInfo.environment["SIEVE_SCENARIO"],
@@ -26,7 +26,8 @@ enum DebugScenario {
         let parts = step.split(separator: " ", maxSplits: 1).map(String.init)
         let command = parts[0], arg = parts.count > 1 ? parts[1] : ""
         var delay = 0.35
-        let controller = NSApp.windows.compactMap { $0.windowController as? BrowserWindowController }.first
+        let controller = NSApp.keyWindow?.windowController as? BrowserWindowController
+            ?? NSApp.windows.compactMap { $0.windowController as? BrowserWindowController }.first
         print("▶ \(step)")
         switch command {
         case "wait": delay = Double(arg) ?? 1
@@ -37,6 +38,9 @@ enum DebugScenario {
         case "filter":
             Preferences.shared.filter.categories = FileCategory(rawValue: arg).map { [$0] } ?? []
         case "hidden": Preferences.shared.filter.showHidden = arg == "on"
+        case "fileviewer":
+            DefaultFileViewer.setEnabled(arg == "on")
+            print("  NSFileViewer = \(DefaultFileViewer.current ?? "Finder") enabled \(DefaultFileViewer.isEnabled)")
         case "sort":
             if let key = SortKey(rawValue: arg) { Preferences.shared.sort.select(key) }
         case "searchsort":

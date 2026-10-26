@@ -19,7 +19,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         buildMenus()
         indexManager.start()
         let start = CommandLine.arguments.dropFirst().first { $0.hasPrefix("/") && FileManager.default.fileExists(atPath: $0) }
-        makeWindowController(start: start ?? NSHomeDirectory()).showWindow(nil)
+        // A launch that opens or reveals something has already made its window in application(_:open:).
+        if windows.isEmpty || start != nil { makeWindowController(start: start ?? NSHomeDirectory()).showWindow(nil) }
         NSApp.activate(ignoringOtherApps: true)
         Task {
             if Preferences.shared.aiEnabled, await model.status() == .ready { model.warmUp() }
@@ -38,6 +39,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
 
+    /// Folders opened with Sieve, and files revealed in it as the default file viewer (see `DefaultFileViewer`).
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls { makeWindowController(start: url.path).showWindow(nil) }
     }

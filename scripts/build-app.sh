@@ -56,6 +56,16 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>NSDownloadsFolderUsageDescription</key><string>${APP_NAME} shows and searches the files in your Downloads folder.</string>
   <key>NSRemovableVolumesUsageDescription</key><string>${APP_NAME} shows the files on removable drives you open.</string>
   <key>NSNetworkVolumesUsageDescription</key><string>${APP_NAME} shows the files on network drives you open.</string>
+  <key>NSAppleEventsUsageDescription</key><string>When ${APP_NAME} is your default file viewer, Reveal in Finder asks Finder to show the file.</string>
+  <key>CFBundleDocumentTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeName</key><string>Folder</string>
+      <key>CFBundleTypeRole</key><string>Viewer</string>
+      <key>LSHandlerRank</key><string>Alternate</string>
+      <key>LSItemContentTypes</key><array><string>public.folder</string></array>
+    </dict>
+  </array>
   <key>NSAppTransportSecurity</key><dict><key>NSAllowsLocalNetworking</key><true/></dict>
 </dict>
 </plist>
